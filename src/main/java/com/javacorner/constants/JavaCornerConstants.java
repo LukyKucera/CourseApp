@@ -13,7 +13,7 @@ public final class JavaCornerConstants {
 
     public static final String KEYWORD = "keyword";
 
-    public static final String INSTRUCTOR = "Instructor";
+    public static final String INSTRUCTOR = "instructor";
 
     public static final String CURRENT_INSTRUCTOR = "currentInstructor";
 

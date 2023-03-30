@@ -1,5 +1,11 @@
 package com.javacorner.web;
 
+import static com.javacorner.constants.JavaCornerConstants.COURSE;
+import static com.javacorner.constants.JavaCornerConstants.KEYWORD;
+import static com.javacorner.constants.JavaCornerConstants.LIST_COURSES;
+import static com.javacorner.constants.JavaCornerConstants.LIST_INSTRUCTORS;
+import static com.javacorner.constants.JavaCornerConstants.OTHER_COURSES;
+
 import com.javacorner.entity.Course;
 import com.javacorner.entity.Instructor;
 import com.javacorner.service.CourseService;
@@ -27,10 +33,10 @@ public class CourseController {
     }
 
     @GetMapping(value = "/index")
-    public String showCourses(Model model, @RequestParam(name = "keyword", defaultValue = "") String keyword) {
+    public String showCourses(Model model, @RequestParam(name = KEYWORD, defaultValue = "") String keyword) {
         List<Course> courses = courseService.findCoursesByCourseName(keyword);
-        model.addAttribute("listCourses", courses);
-        model.addAttribute("keyword", keyword);
+        model.addAttribute(LIST_COURSES, courses);
+        model.addAttribute(KEYWORD, keyword);
         return "course-views/courses";
     }
 
@@ -44,8 +50,8 @@ public class CourseController {
     public String updateCourse(Model model, Long courseId) {
     Course course = courseService.loadCourseById(courseId);
     List<Instructor> instructors = instructorService.fetchInstructors();
-    model.addAttribute("course", course);
-    model.addAttribute("listInstructors", instructors);
+    model.addAttribute(COURSE, course);
+    model.addAttribute(LIST_INSTRUCTORS, instructors);
     return "course-views/formUpdate";
     }
 
@@ -58,8 +64,8 @@ public class CourseController {
     @GetMapping(value = "/formCreate")
     public String formCourses(Model model) {
         List<Instructor> instructors = instructorService.fetchInstructors();
-        model.addAttribute("listInstructors", instructors);
-        model.addAttribute("course", new Course());
+        model.addAttribute(LIST_INSTRUCTORS, instructors);
+        model.addAttribute(COURSE, new Course());
         return "course-views/formCreate";
     }
 
@@ -69,8 +75,8 @@ public class CourseController {
         List<Course> subscribedCourses = courseService.fetchCoursesForStudent(studentId);
         List<Course> otherCourses = courseService.fetchAll().stream().filter(course -> !subscribedCourses.contains(course)).collect(
             Collectors.toList());
-        model.addAttribute("listCourses", subscribedCourses);
-        model.addAttribute("otherCourses", otherCourses);
+        model.addAttribute(LIST_COURSES, subscribedCourses);
+        model.addAttribute(OTHER_COURSES, otherCourses);
         return "course-views/student-courses";
     }
 
@@ -85,14 +91,14 @@ public class CourseController {
     public String coursesForCurrentInstructor(Model model) {
         Long instructorId = 1L; // current student
         Instructor instructor = instructorService.loadInstructorById(instructorId);
-        model.addAttribute("listCourses", instructor.getCourses());
+        model.addAttribute(LIST_COURSES, instructor.getCourses());
         return "course-views/instructor-courses";
     }
 
     @GetMapping(value = "/instructor")
     public String coursesByInstructorId(Model model, Long instructorId) {
         Instructor instructor = instructorService.loadInstructorById(instructorId);
-        model.addAttribute("listCourses", instructor.getCourses());
+        model.addAttribute(LIST_COURSES, instructor.getCourses());
         return "course-views/instructor-courses";
     }
 
