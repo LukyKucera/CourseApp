@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="template">
+<head>
+    <meta charset="UTF-8">
+    <title>Instructors</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.1.3/css/bootstrap.min.css">
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="container mt-3">
+        <div class="card-header">List of Instructors</div>
+        <div class="card-body">
+            <form method="get" th:action="@{index}">
+                <label>Keyword</label>
+                <input type="text" name="keyword" th:value="${keyword}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+            <table class="table mt-3">
+                <thead>
+                <tr class="text-center">
+                    <th>Instructor Id</th>
+                    <th>Instructor First Name</th>
+                    <th>Instructor Last Name</th>
+                    <th>Instructor Summary</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="text-center" th:each="instructor : ${listInstructors}">
+                    <!--/*@thymesVar id="instructor" type="com.javacorner.entity.Instructor"*/-->
+                    <td th:text="${instructor.instructorId}"></td>
+                    <td th:text="${instructor.firstName}"></td>
+                    <td th:text="${instructor.lastName}"></td>
+                    <td th:text="${instructor.summary}"></td>
+                    <td>
+                        <a onclick="return confirm('Are you sure?')" class="btn btn-danger"
+                           th:href="@{/instructors/delete(instructorId=${instructor.instructorId}, keyword=${keyword})}">Delete</a>
+                    </td>
+                    <td>
+                        <a class="btn btn-info"
+                           th:href="@{/courses/instructor(instructorId=${instructor.instructorId})}">Courses</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
