@@ -37,7 +37,7 @@
                             th:text="${instructor.firstName}+' '+${instructor.lastName}"
                             th:value="${instructor.instructorId}"></option>
                 </select>
-                <select sec:authorize="hasAuthority('Instructor')" th:field="${course.instructor}" name="instructor" class="form-select">
+                <select sec:authorize="!hasAuthority('Admin') && hasAuthority('Instructor')" th:field="${course.instructor}" name="instructor" class="form-select">
                     <!--/*@thymesVar id="instructor" type="com.javacorner.entity.Instructor"*/-->
                     <option selected
                             th:text="${currentInstructor.firstName}+' '+${currentInstructor.lastName}"
