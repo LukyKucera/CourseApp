@@ -5,8 +5,8 @@ import com.javacorner.dao.UserDao;
 import com.javacorner.entity.Role;
 import com.javacorner.entity.User;
 import com.javacorner.service.UserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +17,13 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     private RoleDao roleDao;
+    private PasswordEncoder passwordEncoder;
 
 
-    public UserServiceImpl(UserDao userDao, RoleDao roleDao) {
+    public UserServiceImpl(UserDao userDao, RoleDao roleDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.roleDao = roleDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -33,7 +35,8 @@ public class UserServiceImpl implements UserService {
     public User createUser(String email, String password) {
         User user = loadUserByEmail(email);
         if (user != null) throw new RuntimeException("User with email :" + email + "already exist");
-        return userDao.save(new User(email, password));
+        String encodedPassword = passwordEncoder.encode(password);
+        return userDao.save(new User(email, encodedPassword));
     }
 
     @Override
@@ -41,6 +44,12 @@ public class UserServiceImpl implements UserService {
         User user = loadUserByEmail(email);
         Role role = roleDao.findByName(roleName);
         user.assignRoleToUser(role);
+    }
+
+    @Override
+    public boolean doesCurrentUserHasRole(String roleName) {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+            .stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(roleName));
     }
 
 }
